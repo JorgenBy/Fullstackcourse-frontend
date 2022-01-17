@@ -1,0 +1,69 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+stages:
+  - build
+  - test
+  - publish
+
+image: trion/ng-cli
+
+# BUILD PHASE
+#============
+
+build_phase:
+  stage: build
+  before_script:
+    - npm ci
+    - npm install -g @angular/cli
+  script:
+    - ng build --prod --output-hashing=all
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - dist
+      - node_modules
+  only:
+    - main
+
+
+# TEST PHASE
+#===========
+
+test_phase:
+  stage: test
+  image: trion/ng-cli-karma:12.1.3
+  allow_failure: false
+  script:
+    - ng test --progress false --watch false
+  cache:
+    policy: pull
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - dist
+      - node_modules
+  only:
+    - main
+
+# PUBLISH PHASE
+#=============  
+
+publish_phase:
+  before_script:
+    - echo $DOCKER_REPO_PASSWORD | docker login --username $DOCKER_REPO_USERNAME --password-stdin
+  stage: publish
+  image: docker:git
+  services:
+    - docker:20.10.12-dind
+  script:
+    - docker build -t $DOCKER_REPO_USERNAME/$DOCKER_REPO_NAME:frontend .
+    - docker push $DOCKER_REPO_USERNAME/$DOCKER_REPO_NAME:frontend
+  cache:
+    policy: pull
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+      - dist

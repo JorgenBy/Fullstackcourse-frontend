@@ -1,0 +1,24 @@
+<div class="doc-cell-container" (click)="cellClicked()">
+
+    <div class="doc-title-container">
+        {{doc.title}}
+    </div>
+
+    <div class="doc-info-container">
+        <div class="doc-updated-at-container">
+            {{doc.updatedAt | date: 'short'}}
+        </div>
+        <div *ngIf="currentUserIsOwner()" class="doc-is-public-container">
+            <input type="checkbox" [checked]="doc.available" (change)="cellStatusChange($event)" (click)="$event.stopPropagation()">
+            Public
+        </div>
+        <div *ngIf="currentUserIsOwner()" class="doc-delete-container">
+            <button (click)="deleteDocument($event)" (click)="$event.stopPropagation()">Delete</button>
+        </div>
+        <div class="doc-display-name-container">
+            {{docUserDisplayName}}
+        </div>
+    </div>
+
+</div>
+

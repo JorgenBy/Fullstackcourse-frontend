@@ -1,0 +1,40 @@
+.doc-cell-container {
+    width: 100%;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    min-height: 70px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    align-items: center;
+
+    border-radius: 5px;
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+    border-bottom-color: #c1c0c0;
+}
+
+.doc-cell-container:hover {
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.2);
+    transform: translate3d(0, -2px, 0);
+}
+
+.doc-title-container {
+    max-width: 50%;
+    min-width: 30%;
+    margin-left: 10px;
+}
+
+.doc-info-container {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    max-width: 70%;
+    min-width: 50%;
+}
+
+.doc-delete-container {
+    margin-right: 10px;
+}
